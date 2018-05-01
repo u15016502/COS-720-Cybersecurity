@@ -34,13 +34,13 @@ email_headers = None
 
 
 def create_arg_parser():
-    """ Create and initialise an argument parser for aquisition script. """
+    """ Create and initialise an argument parser for acquisition script. """
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument(
         '-p',
         '--path',
         required=True,
-        help='Path to email files for header aquistion'
+        help='Path to email files for header acquisition'
     )
     arg_parser.add_argument(
         '-f',

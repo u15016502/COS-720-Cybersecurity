@@ -62,7 +62,7 @@ class Spinner(threading.Thread):
     """ Animated spinner to indicate processing is occurring. """
     
     def __init__(self, init_message):
-        """ Initalise spinner. """
+        """ Initialise spinner. """
         sys.stdout.write('{0}   '.format(init_message))
         sys.stdout.flush()
         super().__init__(target=self._spin)

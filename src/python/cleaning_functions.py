@@ -68,7 +68,7 @@ def clean_empty_to_header(header, header_values, map_copy):
 def clean_non_multi_value_header(header, header_values, map_copy):
     """ Cleans headers that should not have multiple values. """
     # Some header values ought to be one single value as opposed
-    # to multiple (which happens during header aquistion), such
+    # to multiple (which happens during header acquisition), such
     # as the Subject header. 
     if len(header_values) > 1:
         return [''.join(header_values)]
@@ -96,7 +96,7 @@ def clean_subject_header(header, header_values, map_copy):
                 if new_header_values[-1] == '':
                     new_header_values[-1] = CLEANING_TAGS['no_subject']
                 return [' '.join(new_header_values).strip()]
-        # The subject is acceptible as is.
+        # The subject is acceptable as is.
         return header_values
     # There is no subject, therefore, tag it.
     return [CLEANING_TAGS['no_subject']]
@@ -104,7 +104,7 @@ def clean_subject_header(header, header_values, map_copy):
 
 def clean_to_header(header, header_values, map_copy):
     """ Cleans To and similar header values. """
-    # Since aquisition reads line-by-line, this function ensures that
+    # Since acquisition reads line-by-line, this function ensures that
     # the To header (as well as similar header values such as Cc) values
     # are distinctly separated values. 
     #   e.g: ['john@enron.com', 'jane@enron.com'] as opposed to 
