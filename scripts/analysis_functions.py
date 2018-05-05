@@ -13,10 +13,40 @@ import matplotlib.pyplot as plt
 import operator
 from wordcloud import WordCloud, STOPWORDS
 import progressbar
+import util as util
+
+
+def analyze_basic(headers):
+    util.log_print("Performing Basic Analysis")
+    # Check how many people sent emails to themselves
+    sent_to_self_count = len(list(filter(lambda header: header["From"][0] in header["To"][0], headers)))
+    sent_to_self_percentage = round(sent_to_self_count / len(headers) * 100, 2)
+    print("{0} Emails ({1}%) were sent from the senders to themselves"
+          .format(sent_to_self_count, sent_to_self_percentage))
+
+    # Check how many emails were sent from the same domain
+    valid_headers = list(filter(lambda h: len(h["From"][0].split("@")) == 2, headers))
+    same_domain_count = len(list(filter(lambda d: d["From"][0].split("@")[1].split(".")[0]
+                            in " ".join(d["To"]), valid_headers)))
+    same_domain_percentage = round(same_domain_count / len(headers) * 100, 2)
+    print("{0} Emails ({1}%) were sent from the same domain".format(same_domain_count, same_domain_percentage))
+
+    # Check how many emails were sent to more than one recipient
+    multiple_recipient_count = len(list(filter(lambda q: len(q["To"]) > 1, headers)))
+    multiple_recipient_percentage = round(multiple_recipient_count / len(headers) * 100, 2)
+    print("{0} Emails ({1}%) were sent to more than one recipient"
+          .format(multiple_recipient_count, multiple_recipient_percentage))
+
+    # Check how many emails were sent to a single recipient
+    single_recipient_count = len(list(filter(lambda q: len(q["To"]) == 1, headers)))
+    single_recipient_percentage = round(single_recipient_count / len(headers) * 100, 2)
+    print("{0} Emails ({1}%) were sent to only one recipient"
+          .format(single_recipient_count, single_recipient_percentage))
 
 
 def analyze_subjects(headers, words_to_strip):
     """ Creates a word cloud of all subjects"""
+    util.log_print("Running Subject Analysis")
     # Map headers to subjects
     subjects = list(map(lambda h: h["Subject"][0], headers))
     text = " ".join(subjects)
@@ -36,8 +66,10 @@ def analyze_subjects(headers, words_to_strip):
 
 def analyze_content_types(headers, is_charset):
     if is_charset:
+        util.log_print("Running Charset Analysis")
         content_types = list(map(lambda h: h["Content-Type"][1].split("=")[1], headers))
     else:
+        util.log_print("Running Content Type Analysis")
         content_types = list(map(lambda h: h["Content-Type"][0], headers))
 
     unique_types = list(set(content_types))
@@ -53,11 +85,15 @@ def analyze_content_types(headers, is_charset):
 
 
 def analyze_days(headers):
+    util.log_print("Running Day of Week Analysis")
     days_of_week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     email_days = list(map(lambda x: x["Date"][0].split(",")[0], headers))
     day_counts = []
     for day in days_of_week:
         day_counts.append(email_days.count(day))
+
+    # Display statistics
+    util.display_stats(day_counts, "Statistics for days on which emails are set:")
 
     # Configure bar chart
     num_days = len(days_of_week)
@@ -81,11 +117,15 @@ def analyze_days(headers):
 
 
 def analyze_months(headers):
+    util.log_print("Running Month Analysis")
     months_of_year = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     email_months = list(map(lambda x: x["Date"][0].split(" ")[2], headers))
     month_counts = []
     for month in months_of_year:
         month_counts.append(email_months.count(month))
+
+    # Display statistics
+    util.display_stats(month_counts, "Statistics for months in which emails are sent:")
 
     # Configure bar chart
     num_days = len(months_of_year)
@@ -109,6 +149,7 @@ def analyze_months(headers):
 
 
 def analyze_years(headers):
+    util.log_print("Running Year Analysis")
     email_years = list(map(lambda x: x["Date"][0].split(" ")[3]
                            .replace("2000", "x")
                            .replace("000", "200")
@@ -118,6 +159,10 @@ def analyze_years(headers):
     year_counts = []
     for year in unique_years:
         year_counts.append(email_years.count(year))
+
+    # Display statistics
+    util.display_stats(year_counts, "Statistics for years in which emails are sent:")
+
     # Configure line chart
     unique_years = list(map(int, unique_years))
     plt.plot(unique_years, year_counts, color='r', alpha=0.6)
@@ -130,12 +175,17 @@ def analyze_years(headers):
 
 
 def analyze_times(headers):
+    util.log_print("Running Time Analysis")
     hours = list(map(lambda x: int(x["Date"][0].split(" ")[4].split(":")[0]), headers))
     unique_hours = list(set(hours))
     unique_hours.sort()
     hours_count = []
     for hour in unique_hours:
         hours_count.append(hours.count(hour))
+
+    # Display statistics
+    util.display_stats(hours_count, "Statistics for hours in which emails are sent:")
+
     # Configure line chart
     plt.plot(unique_hours, hours_count, color='g', alpha=0.6)
     plt.xlim(0, 24)
@@ -146,7 +196,46 @@ def analyze_times(headers):
     plt.show()
 
 
+def analyze_domains(headers, top):
+    util.log_print("Running Domain Analysis")
+    valid_headers = list(filter(lambda h: len(h["From"][0].split("@")) == 2, headers))
+    domains = list(map(lambda h: h["From"][0].split("@")[1].split(".")[0], valid_headers))
+    unique_domains = set(domains)
+    domain_counts = {}
+    counter = 0
+    with progressbar.ProgressBar(max_value=len(unique_domains)) as bar:
+        for domain in unique_domains:
+            domain_counts[domain] = domains.count(domain)
+            bar.update(counter)
+            counter += 1
+    sorted_domain_counts = sorted(domain_counts.items(), key=operator.itemgetter(1))
+    sorted_domain_counts.reverse()
+    chart_domains = []
+    chart_domain_counts = []
+    print("Top {0} domains that sent emails:".format(top))
+    for x in range(top):
+        chart_domains.append(sorted_domain_counts[x][0])
+        chart_domain_counts.append(sorted_domain_counts[x][1])
+        # Print results
+        print("{0}. {1} - {2} emails sent".format(x+1, sorted_domain_counts[x][0], sorted_domain_counts[x][1]))
+    # Draw horizontal bar chart
+    plt.rcdefaults()
+    fig, ax = plt.subplots()
+    y_pos = np.arange(len(chart_domains))
+    ax.barh(y_pos, chart_domain_counts, align='center',
+            color='green', ecolor='black')
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(chart_domains)
+    ax.invert_yaxis()  # labels read top-to-bottom
+    ax.set_xlabel('Number of emails sent')
+    ax.set_title('Emails Sent per Domain')
+
+    plt.savefig("../data/images/domainsA.png")
+    plt.show()
+
+
 def get_max_senders(headers, top):
+    util.log_print("Running Max Senders Analysis")
     email_addresses = list(map(lambda h: h["From"][0].split("@")[0], headers))
     unique_addresses = list(set(email_addresses))
     address_counts = {}
@@ -164,10 +253,12 @@ def get_max_senders(headers, top):
     for x in range(top):
         graph_emails.append(sorted_address_counts[x][0])
         graph_counts.append(sorted_address_counts[x][1])
-    print(graph_emails)
-    print(graph_counts)
+
+    # Display statistics
+    util.display_stats(graph_counts, "Statistics for emails sent per person:")
 
     # Configure bar chart
+    plt.tight_layout()
     num_emails = len(graph_emails)
     ind = np.arange(num_emails)
     bar_width = 0.6
@@ -182,3 +273,4 @@ def get_max_senders(headers, top):
 
     plt.savefig("../data/images/senders.png")
     plt.show()
+
