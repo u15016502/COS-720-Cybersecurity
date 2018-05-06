@@ -6,17 +6,15 @@ exploratory data analysis on the cleaned headers.
 
 """
 import numpy as np
-import time
-import pandas as pd
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import operator
 from wordcloud import WordCloud, STOPWORDS
 import progressbar
-import util as util
+import util
 
 
 def analyze_basic(headers):
+    """ Perform basic analysis on the email data set """
     util.log_print("Performing Basic Analysis")
     # Check how many people sent emails to themselves
     sent_to_self_count = len(list(filter(lambda header: header["From"][0] in header["To"][0], headers)))
@@ -61,10 +59,11 @@ def analyze_subjects(headers, words_to_strip):
     plt.imshow(word_cloud)
     plt.axis("off")
     plt.show()
-    plt.imsave("../data/images/res.png", word_cloud)
+    plt.imsave("../../res/images/sub.png", word_cloud)
 
 
 def analyze_content_types(headers, is_charset):
+    """ Creates a pie chart of all content types or charsets"""
     if is_charset:
         util.log_print("Running Charset Analysis")
         content_types = list(map(lambda h: h["Content-Type"][1].split("=")[1], headers))
@@ -80,11 +79,12 @@ def analyze_content_types(headers, is_charset):
     ax1.pie(counts, labels=unique_types, autopct='%1.1f%%',
             shadow=True, startangle=90)
     ax1.axis('equal')
-    plt.savefig("../data/images/content" + str(is_charset) + ".png")
+    plt.savefig("../../res/images/content" + str(is_charset) + ".png")
     plt.show()
 
 
 def analyze_days(headers):
+    """ Creates a bar chart showing the number of emails sent per day"""
     util.log_print("Running Day of Week Analysis")
     days_of_week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     email_days = list(map(lambda x: x["Date"][0].split(",")[0], headers))
@@ -112,11 +112,12 @@ def analyze_days(headers):
         ax.text(rect.get_x() + rect.get_width() / 2., 1 * height,
                 '%d' % int(height),
                 ha='center', va='bottom')
-    plt.savefig("../data/images/days.png")
+    plt.savefig("../../res/images/days.png")
     plt.show()
 
 
 def analyze_months(headers):
+    """ Creates a bar chart showing the number of emails sent per month """
     util.log_print("Running Month Analysis")
     months_of_year = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     email_months = list(map(lambda x: x["Date"][0].split(" ")[2], headers))
@@ -144,11 +145,12 @@ def analyze_months(headers):
         ax.text(rect.get_x() + rect.get_width() / 2., 1 * height,
                 '%d' % int(height),
                 ha='center', va='bottom')
-    plt.savefig("../data/images/months.png")
+    plt.savefig("../../res/images/months.png")
     plt.show()
 
 
 def analyze_years(headers):
+    """ Creates a line chart showing the number of emails sent per year """
     util.log_print("Running Year Analysis")
     email_years = list(map(lambda x: x["Date"][0].split(" ")[3]
                            .replace("2000", "x")
@@ -170,11 +172,12 @@ def analyze_years(headers):
     plt.ylabel('Number of Emails')
     plt.xlabel('Year')
     plt.title('Number of emails per year')
-    plt.savefig("../data/images/years.png")
+    plt.savefig("../../res/images/years.png")
     plt.show()
 
 
 def analyze_times(headers):
+    """ Creates a line chart showing the number of emails sent per hour """
     util.log_print("Running Time Analysis")
     hours = list(map(lambda x: int(x["Date"][0].split(" ")[4].split(":")[0]), headers))
     unique_hours = list(set(hours))
@@ -192,11 +195,12 @@ def analyze_times(headers):
     plt.ylabel('Number of Emails')
     plt.xlabel('Hour of Day')
     plt.title('Number of emails per hour')
-    plt.savefig("../data/images/hours.png")
+    plt.savefig("../../res/images/hours.png")
     plt.show()
 
 
 def analyze_domains(headers, top):
+    """ Creates a horizontal bar chart showing the number of emails sent by the top domains """
     util.log_print("Running Domain Analysis")
     valid_headers = list(filter(lambda h: len(h["From"][0].split("@")) == 2, headers))
     domains = list(map(lambda h: h["From"][0].split("@")[1].split(".")[0], valid_headers))
@@ -230,11 +234,12 @@ def analyze_domains(headers, top):
     ax.set_xlabel('Number of emails sent')
     ax.set_title('Emails Sent per Domain')
 
-    plt.savefig("../data/images/domainsA.png")
+    plt.savefig("../../res/images/domainsA.png")
     plt.show()
 
 
 def get_max_senders(headers, top):
+    """ Creates a bar chart showing the number of emails sent by the top senders """
     util.log_print("Running Max Senders Analysis")
     email_addresses = list(map(lambda h: h["From"][0].split("@")[0], headers))
     unique_addresses = list(set(email_addresses))
@@ -271,6 +276,6 @@ def get_max_senders(headers, top):
     ax.set_xticklabels(graph_emails)
     plt.xticks(rotation=90)
 
-    plt.savefig("../data/images/senders.png")
+    plt.savefig("../../res/images/senders.png")
     plt.show()
 

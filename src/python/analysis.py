@@ -10,7 +10,7 @@ the headers produced by cleaning.py
 import json
 import argparse
 import progressbar
-import util as util
+import util
 import analysis_functions as af
 
 NUMBER_OF_HEADERS = 251703
@@ -29,6 +29,7 @@ def create_arg_parser():
 
 
 def read_headers(filename):
+    """ Reads the headers from the specified file and returns them as a list """
     util.log_print("Reading Headers")
     headers = []
     counter = 0
@@ -42,6 +43,7 @@ def read_headers(filename):
 
 
 def bulk_analyze(headers):
+    """ Perform all analysis techniques on the provided email headers """
     # Get Subject Word Cloud
     af.analyze_subjects(headers, ["no_subject", "FW", "RE"])
     # Find different Content-Types
@@ -60,7 +62,6 @@ def bulk_analyze(headers):
     af.get_max_senders(headers, 10)
     # Check which are the most common domains that sent emails
     af.analyze_domains(headers, 5)
-    # af.analyze_email_routes(headers)
 
 
 def main():
