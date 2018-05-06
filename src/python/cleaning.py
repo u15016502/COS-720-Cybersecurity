@@ -144,8 +144,8 @@ def clean_data_line(unclean_data_line):
             cleaned_data_line = util.stringify_headers(data_map)
             # Add cleaned, stringified data to data write queue.
             data_to_write_queue.put(cleaned_data_line, False)
-        # If something wnet wrong, ignore the data entry.
-        except Exception as error:
+        # If something went wrong, ignore the data entry.
+        except Exception:
             number_of_data_lines.value -= 1
     # If the data entry is not valid or unique, update the global count of data
     # entries for progress and logging purposes.
@@ -204,7 +204,7 @@ def write_clean_data_file(clean_data_file_name):
                 counter += 1
                 # Update progress bar.
                 progress_bar.update(counter, total=number_of_data_lines.value)
-            except Exception as error:
+            except Exception:
                 # Finish up the writing process.
                 progress_bar.clean()
                 break
@@ -215,7 +215,7 @@ def write_clean_data_file(clean_data_file_name):
 def clean_data(unclean_data_file_name):
     """ Orchestrates reading and writing data processes. """
     global number_of_data_lines
-    # Report orignal number of data lines.
+    # Report original number of data lines.
     pre_log_entry = 'Found {0} entries in "{1}"'.format(
         number_of_data_lines.value,
         unclean_data_file_name
