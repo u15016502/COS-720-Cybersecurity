@@ -44,7 +44,6 @@ tree_node = TreeNode()
 
 tree_builder.induce_tree(decision_tree.root_node, training_set)
 
-file_parser.write_file("Phishing emails within the training set: \n \n")
 file_parser.write_file(decision_tree.traverse_entire_tree(0, decision_tree.root_node,None,'x',""))
 
 file_parser.write_file("Phishing emails within the classification set: \n \n")
