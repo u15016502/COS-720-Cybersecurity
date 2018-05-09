@@ -63,18 +63,6 @@ def check_is_valid_file(file_name):
         sys.exit()
 
 
-def file_line_count(file_name):
-    """ Get line count of specified file. """
-    spinner = util.Spinner('Counting entries in "{0}"'.format(file_name))
-    spinner.start()
-    i = 0
-    with open(file_name) as f:
-        for i, l in enumerate(f):
-            pass
-    spinner.stop()
-    return i + 1
-
-
 def initialise_global_variables(unclean_data_file_name):
     """ Initialise global variables for use throughout the script. """
     global data_to_write_queue
@@ -83,7 +71,7 @@ def initialise_global_variables(unclean_data_file_name):
     global modify_global_mutex
     data_to_write_queue = Queue()
     unique_data_set = Manager().dict()
-    number_of_data_lines = Value('i', file_line_count(unclean_data_file_name))
+    number_of_data_lines = Value('i', util.file_line_count(unclean_data_file_name))
     modify_global_mutex = Lock()
 
 
@@ -174,19 +162,6 @@ def read_unclean_data_file(unclean_data_file_name):
     pool.join()
 
 
-def create_clean_data_file_name(unclean_data_file_name):
-    """ Generates a new file name for clean data file. """
-    # Split the the file name into path sections (in case they are present).
-    file_path = unclean_data_file_name.split('/')
-    # Split the file name into name and extensions.
-    file_name = file_path[-1].split('.')
-    # Use the unclean data file name as the basis for the name of the new file.
-    file_name[0] = '{0}{1}'.format(file_name[0], CLEAN_FILE_NAME_ADDITION)
-    # Join everything again and return final name.
-    file_path[-1] = '.'.join(file_name)
-    return '/'.join(file_path)
-
-
 def write_clean_data_file(clean_data_file_name):
     """ Write clean data to the specified data file. """
     global data_to_write_queue
@@ -225,7 +200,10 @@ def clean_data(unclean_data_file_name):
     read_process = Process(target=read_unclean_data_file, args=(unclean_data_file_name,))
     read_process.start()
     # Write clean data in current process.
-    clean_data_file_name = create_clean_data_file_name(unclean_data_file_name)
+    clean_data_file_name = util.create_new_data_file_name(
+        unclean_data_file_name,
+        CLEAN_FILE_NAME_ADDITION
+    )
     entries_written = write_clean_data_file(clean_data_file_name)
     # Report number of clean data lines.
     post_log_entry = '{0} entries written in "{1}"'.format(
