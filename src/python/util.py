@@ -5,6 +5,7 @@ import math
 import sys
 import time
 import threading
+import statistics
 
 EMAIL_HEADERS = [
     'Message-ID',
@@ -28,26 +29,44 @@ EMAIL_X_HEADERS = [
     'X-FileName'
 ]
 
+
 def log_print(string):
     """ Used to print to console in a consistent manner. """
     print('{0:=^100}'.format('    {0}    '.format(string)))
+
 
 def create_header_map():
     """ Create and initialise a header map to fill from email file. """
     global email_headers
     return { header: [] for header in email_headers }
 
+
 def stringify_headers(data_map):
     """ Stringifies given header data map. """
     return json.dumps(data_map, separators=(',', ':'))
+
 
 def parse_headers(data_string):
     """ Parse stringified header data into header map. """
     return json.loads(data_string)
 
+
 def determine_optimal_chunksize(num_elements, num_cores):
     """ Determines optimal chunksize of an iterable based on number of elements and cores. """
     return int(math.ceil(num_elements / float(num_cores)))
+
+
+def display_stats(data, message):
+    # Calculate Statistics
+    mean = statistics.mean(data)
+    median = statistics.median(data)
+    stdev = statistics.stdev(data)
+
+    print(message)
+    print("Mean: {0}".format(mean))
+    print("Median: {0}".format(median))
+    print("Standard Deviation: {0}".format(stdev))
+
 
 def hash_data(data_map):
     """ Produces and returns a hash string to check for data uniqueness. """
@@ -57,6 +76,7 @@ def hash_data(data_map):
         data_map['Subject']
     )
     return hashlib.md5(data_string.encode()).hexdigest()
+
 
 class Spinner(threading.Thread):
     """ Animated spinner to indicate processing is occurring. """
@@ -83,6 +103,7 @@ class Spinner(threading.Thread):
         time.sleep(0.1)
         sys.stdout.write(u'\u001b[1000D')
         sys.stdout.flush()
+
 
 class ProgressBar():
     """ Animated progress bar to track progress of processing. """
