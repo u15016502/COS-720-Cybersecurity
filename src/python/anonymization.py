@@ -35,7 +35,7 @@ def read_headers(filename):
     # Get number of entries in given dataset file.
     NUMBER_OF_HEADERS = util.file_line_count(filename)
     # Continue reading of headers.
-    util.log_print("Reading Headers")
+    util.log_print("{} entries found".format(NUMBER_OF_HEADERS))
     headers = []
     counter = 0
     with open(filename) as file:
@@ -54,11 +54,14 @@ def write_anaonymized_headers(current_file_name, headers_list):
         current_file_name,
         ANON_FILE_NAME_ADDITION
     )
+    counter = 0
     # Write header content to new file.
     with open(new_file, FILE_WRITE_MODE) as data_file:
         for headers in headers_list:
             data = util.stringify_headers(headers)
             data_file.write('{0}\n'.format(data))
+            counter += 1
+    util.log_print("{} entries anonymized".format(counter))
 
 
 def main():
