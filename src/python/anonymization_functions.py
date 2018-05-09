@@ -5,6 +5,20 @@ Script containing functions used for anonymizing the email headers
 """
 
 
+def anonymize_date(date):
+    """ Generalise time of the Date header value """
+    values = date[0].split(" ")
+    # Looking for time in header values (at index 4)
+    time = values[4]
+    # Generalise the value by stripping seconds and making it a ranged value
+    time = time.split(":")
+    time = "[{0}:00 - {0}:59]".format(time[0])
+    # Put the generalised time value back in its position
+    values[4] = time
+    # Join everythin up again
+    return [" ".join(values)]
+
+
 def anonymize(headers):
     """ Removes the explicit identifiers from the headers """
     valid_headers = list(filter(lambda h: len(h["From"][0].split("@")) == 2 and h["To"][0] != "{mail_list}", headers))
@@ -37,5 +51,6 @@ def anonymize(headers):
         # Suppress X-Filename to only show the file extension
         if len(header["X-FileName"]) > 0 and header["X-FileName"][0] != '':
             header["X-FileName"] = ["." + header["X-FileName"][0].split(".")[1]]
-
+        # Generalise Date header value.
+        header["Date"] = anonymize_date(header["Date"])
     return headers
