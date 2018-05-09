@@ -15,7 +15,8 @@ import json
 import anonymization_functions as af
 
 NUMBER_OF_HEADERS = 251703
-
+ANON_FILE_NAME_ADDITION = '_anon'
+FILE_WRITE_MODE = 'w'
 
 def create_arg_parser():
     """ Create and initialise an argument parser for anonymization script. """
@@ -31,6 +32,9 @@ def create_arg_parser():
 
 def read_headers(filename):
     """ Reads the headers from the specified file and returns them as a list """
+    # Get number of entries in given dataset file.
+    NUMBER_OF_HEADERS = util.file_line_count(filename)
+    # Continue reading of headers.
     util.log_print("Reading Headers")
     headers = []
     counter = 0
@@ -43,6 +47,20 @@ def read_headers(filename):
     return headers
 
 
+def write_anaonymized_headers(current_file_name, headers_list):
+    """ Writes anonymized headers to a file. """
+    # Create new file name from given file name.
+    new_file = util.create_new_data_file_name(
+        current_file_name,
+        ANON_FILE_NAME_ADDITION
+    )
+    # Write header content to new file.
+    with open(new_file, FILE_WRITE_MODE) as data_file:
+        for headers in headers_list:
+            data = util.stringify_headers(headers)
+            data_file.write('{0}\n'.format(data))
+
+
 def main():
     """ Setup for data anonymization. """
     args = create_arg_parser().parse_args()
@@ -50,6 +68,8 @@ def main():
     headers = read_headers(args.file)
     # Perform anonymization
     headers = af.anonymize(headers)
+    # Write anonymized headers to file.
+    write_anaonymized_headers(args.file, headers)
 
 
 if __name__ == '__main__':

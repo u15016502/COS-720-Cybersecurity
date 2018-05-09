@@ -3,7 +3,6 @@
 Script containing functions used for anonymizing the email headers
 
 """
-import progressbar
 
 
 def anonymize(headers):
