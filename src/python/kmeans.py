@@ -82,7 +82,7 @@ for x in range(1,len(centroids)+1):
 				file_parser_secondary.write_file("-------------------------\n")
 
 		file_parser.write_file("Number of associated emails: " + str(len(centroids[x-1].cluster_data)) + "\n")
-		for y in range(1,13):
+		for y in range(1,12):
 			feature_string = "Feature " + str(y) + ": " +  str(centroids[x-1].features[y-1]) + "\n"
 			file_parser.write_file(feature_string)
 		file_parser.write_file("---------- \n")
