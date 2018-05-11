@@ -10,8 +10,8 @@ utility without having enough information to uniquely identify a person
 
 import argparse
 import progressbar
-import util
 import json
+from .. import util
 import anonymization_functions as af
 
 NUMBER_OF_HEADERS = 251703

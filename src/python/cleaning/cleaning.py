@@ -23,7 +23,7 @@ import os
 import sys
 import time
 import traceback
-import util
+from .. import util
 from multiprocessing import Lock, Manager, Process, Pool, Queue, Value
 
 FILE_READ_MODE = 'r'

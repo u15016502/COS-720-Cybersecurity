@@ -8,9 +8,9 @@ exploratory data analysis on the cleaned headers.
 import numpy as np
 import matplotlib.pyplot as plt
 import operator
-from wordcloud import WordCloud, STOPWORDS
 import progressbar
-import util
+from .. import util
+from wordcloud import WordCloud, STOPWORDS
 
 
 def analyze_basic(headers):

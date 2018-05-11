@@ -10,8 +10,8 @@ the headers produced by cleaning.py
 import json
 import argparse
 import progressbar
-import util
 import analysis_functions as af
+from .. import util
 
 NUMBER_OF_HEADERS = 251703
 

@@ -20,7 +20,7 @@ import os
 import queue
 import re
 import time
-import util
+from .. import util
 from multiprocessing import Pool, Queue
 
 FILE_READ_MODE = 'r'
