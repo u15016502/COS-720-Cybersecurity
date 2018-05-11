@@ -78,6 +78,31 @@ def hash_data(data_map):
     return hashlib.md5(data_string.encode()).hexdigest()
 
 
+def create_new_data_file_name(current_data_file_name, file_name_appendage):
+    """ Generates a new file name for current data file based on appendage. """
+    # Split the the file name into path sections (in case they are present).
+    file_path = current_data_file_name.split('/')
+    # Split the file name into name and extensions.
+    file_name = file_path[-1].split('.')
+    # Use the unclean data file name as the basis for the name of the new file.
+    file_name[0] = '{0}{1}'.format(file_name[0], file_name_appendage)
+    # Join everything again and return final name.
+    file_path[-1] = '.'.join(file_name)
+    return '/'.join(file_path)
+
+
+def file_line_count(file_name):
+    """ Get line count of specified file. """
+    spinner = Spinner('Counting entries in "{0}"'.format(file_name))
+    spinner.start()
+    i = 0
+    with open(file_name) as f:
+        for i, l in enumerate(f):
+            pass
+    spinner.stop()
+    return i + 1
+
+
 class Spinner(threading.Thread):
     """ Animated spinner to indicate processing is occurring. """
     
