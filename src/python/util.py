@@ -1,3 +1,11 @@
+"""Util script
+
+This script contains some commonly used functions,
+classes and variables for utilisation by the various
+other scripts contained within this project.
+
+"""
+
 
 import hashlib
 import json
@@ -6,6 +14,7 @@ import sys
 import time
 import threading
 import statistics
+
 
 EMAIL_HEADERS = [
     'Message-ID',
@@ -32,7 +41,7 @@ EMAIL_X_HEADERS = [
 
 def log_print(string):
     """ Used to print to console in a consistent manner. """
-    print('{0:=^100}'.format('    {0}    '.format(string)))
+    print('{0:=^110}'.format('    {0}    '.format(string)))
 
 
 def create_header_map():
@@ -52,16 +61,18 @@ def parse_headers(data_string):
 
 
 def determine_optimal_chunksize(num_elements, num_cores):
-    """ Determines optimal chunksize of an iterable based on number of elements and cores. """
+    """ Determines optimal chunksize of an iterable based on number 
+        of elements and cores.
+    """
     return int(math.ceil(num_elements / float(num_cores)))
 
 
 def display_stats(data, message):
+    """ Display stats regarding given data. """
     # Calculate Statistics
     mean = statistics.mean(data)
     median = statistics.median(data)
     stdev = statistics.stdev(data)
-
     print(message)
     print("Mean: {0}".format(mean))
     print("Median: {0}".format(median))
@@ -144,10 +155,20 @@ class ProgressBar():
     def update(self, current_length, total=None):
         """ Update the progress of the animated progress bar. """
         total_length = self._total if total is None else total
-        filled_length = int(round(self._bar_length * (current_length / float(total_length))))
-        percent = round(100.0 * (current_length / float(total_length)), ProgressBar._ROUND_DECIMAL_PLACES)
+        filled_length = int(round(
+            self._bar_length * (current_length / float(total_length))
+        ))
+        percent = round(
+            100.0 * (current_length / float(total_length)),
+            ProgressBar._ROUND_DECIMAL_PLACES
+        )
         bar = '=' * filled_length + '-' * (self._bar_length - filled_length)
-        sys.stdout.write('[{0}] {1}{2} ...{3}\r'.format(bar, percent, '%', self._status))
+        sys.stdout.write('[{0}] {1}{2} ...{3}\r'.format(
+            bar,
+            percent,
+            '%',
+            self._status
+        ))
         sys.stdout.flush()
 
     def clean(self):
