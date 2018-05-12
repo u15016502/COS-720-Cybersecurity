@@ -34,6 +34,9 @@ def create_arg_parser():
 def read_headers(filename):
     """ Reads the headers from the specified file and returns them as a list """
     util.log_print("Reading Headers")
+    # Get number of entries in given dataset file.
+    NUMBER_OF_HEADERS = util.file_line_count(filename)
+    # Continue with analysis.
     headers = []
     counter = 0
     with open(filename) as file:

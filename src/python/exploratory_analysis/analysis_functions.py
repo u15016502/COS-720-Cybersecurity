@@ -62,7 +62,7 @@ def analyze_subjects(headers, words_to_strip):
     plt.imshow(word_cloud)
     plt.axis("off")
     plt.show()
-    plt.imsave("../../res/images/sub.png", word_cloud)
+    plt.imsave("res/images/sub.png", word_cloud)
 
 
 def analyze_content_types(headers, is_charset):
@@ -82,7 +82,7 @@ def analyze_content_types(headers, is_charset):
     ax1.pie(counts, labels=unique_types, autopct='%1.1f%%',
             shadow=True, startangle=90)
     ax1.axis('equal')
-    plt.savefig("../../res/images/content" + str(is_charset) + ".png")
+    plt.savefig("res/images/content" + str(is_charset) + ".png")
     plt.show()
 
 
@@ -115,7 +115,7 @@ def analyze_days(headers):
         ax.text(rect.get_x() + rect.get_width() / 2., 1 * height,
                 '%d' % int(height),
                 ha='center', va='bottom')
-    plt.savefig("../../res/images/days.png")
+    plt.savefig("res/images/days.png")
     plt.show()
 
 
@@ -148,7 +148,7 @@ def analyze_months(headers):
         ax.text(rect.get_x() + rect.get_width() / 2., 1 * height,
                 '%d' % int(height),
                 ha='center', va='bottom')
-    plt.savefig("../../res/images/months.png")
+    plt.savefig("res/images/months.png")
     plt.show()
 
 
@@ -175,7 +175,7 @@ def analyze_years(headers):
     plt.ylabel('Number of Emails')
     plt.xlabel('Year')
     plt.title('Number of emails per year')
-    plt.savefig("../../res/images/years.png")
+    plt.savefig("res/images/years.png")
     plt.show()
 
 
@@ -198,7 +198,7 @@ def analyze_times(headers):
     plt.ylabel('Number of Emails')
     plt.xlabel('Hour of Day')
     plt.title('Number of emails per hour')
-    plt.savefig("../../res/images/hours.png")
+    plt.savefig("res/images/hours.png")
     plt.show()
 
 
@@ -210,11 +210,12 @@ def analyze_domains(headers, top):
     unique_domains = set(domains)
     domain_counts = {}
     counter = 0
-    with progressbar.ProgressBar(max_value=len(unique_domains)) as bar:
-        for domain in unique_domains:
-            domain_counts[domain] = domains.count(domain)
-            bar.update(counter)
-            counter += 1
+    bar = util.ProgressBar(len(unique_domains), 'Analyzing domains', 72)
+    for domain in unique_domains:
+        domain_counts[domain] = domains.count(domain)
+        bar.update(counter)
+        counter += 1
+    bar.clean()
     sorted_domain_counts = sorted(domain_counts.items(), key=operator.itemgetter(1))
     sorted_domain_counts.reverse()
     chart_domains = []
@@ -237,22 +238,23 @@ def analyze_domains(headers, top):
     ax.set_xlabel('Number of emails sent')
     ax.set_title('Emails Sent per Domain')
 
-    plt.savefig("../../res/images/domainsA.png")
+    plt.savefig("res/images/domainsA.png")
     plt.show()
 
 
 def get_max_senders(headers, top):
     """ Creates a bar chart showing the number of emails sent by the top senders """
-    util.log_print("Running Max Senders Analysis")
+    print("Running Max Senders Analysis")
     email_addresses = list(map(lambda h: h["From"][0].split("@")[0], headers))
     unique_addresses = list(set(email_addresses))
     address_counts = {}
     counter = 0
-    with progressbar.ProgressBar(max_value=len(unique_addresses)) as bar:
-        for address in unique_addresses:
-            address_counts[address] = email_addresses.count(address)
-            bar.update(counter)
-            counter += 1
+    bar = util.ProgressBar(len(unique_addresses), 'Analyzing uniqueness', 71)
+    for address in unique_addresses:
+        address_counts[address] = email_addresses.count(address)
+        bar.update(counter)
+        counter += 1
+    bar.clean()
     sorted_address_counts = sorted(address_counts.items(), key=operator.itemgetter(1))
     sorted_address_counts.reverse()
 
@@ -279,6 +281,6 @@ def get_max_senders(headers, top):
     ax.set_xticklabels(graph_emails)
     plt.xticks(rotation=90)
 
-    plt.savefig("../../res/images/senders.png")
+    plt.savefig("res/images/senders.png")
     plt.show()
 

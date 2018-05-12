@@ -139,6 +139,10 @@ class Spinner(threading.Thread):
         time.sleep(0.1)
         sys.stdout.write(u'\u001b[1000D')
         sys.stdout.flush()
+        sys.stdout.write(' ' * 120)
+        sys.stdout.flush()
+        sys.stdout.write(u'\u001b[1000D')
+        sys.stdout.flush()
 
 
 class ProgressBar():
@@ -173,5 +177,9 @@ class ProgressBar():
 
     def clean(self):
         """ Clean current line of terminal to remove progress bar. """
+        sys.stdout.write(u'\u001b[1000D')
+        sys.stdout.flush()
+        sys.stdout.write(' ' * 120)
+        sys.stdout.flush()
         sys.stdout.write(u'\u001b[1000D')
         sys.stdout.flush()
