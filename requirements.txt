@@ -1,3 +1,6 @@
 # Project Python dependencies
 progressbar33
 requests
+numpy
+matplotlib
+wordcloud

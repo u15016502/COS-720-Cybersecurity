@@ -164,6 +164,18 @@ def print_rule_title(title):
     print('{0:^110}'.format('---  {0} ---'.format(title)))
 
 
+def append_to_file_name(file_name, appendage):
+    dir_name = os.path.dirname(file_name)
+    file_base_name = os.path.basename(file_name)
+    return os.path.join(
+        dir_name,
+        '{0}.{1}'.format(
+            file_base_name.split('.')[0] + appendage,
+            file_base_name.split('.')[-1]
+        )
+    )
+
+
 def download_rule(**kwargs):
     dataset_path = kwargs.get('dataset_path', DEFAULT_RESOURCE_DIR)
     # Check if dataset path given exists if it does not assume
@@ -232,8 +244,9 @@ def anonymisation_rule(**kwargs):
     print_rule_title('Anonymisation')
     data_file = kwargs.get('file', os.path.join(
         DEFAULT_RESOURCE_DIR,
-        DEFAULT_CLEAN_HEADER_FILE
+        DEFAULT_HEADER_FILE
     ))
+    data_file = append_to_file_name(data_file, '_clean')
     # Run the anonymisation script
     run(
         '{0} {1}'.format(
@@ -251,6 +264,24 @@ def anonymisation_rule(**kwargs):
 
 def analysis_rule(**kwargs):
     print_rule_title('Analysis')
+    data_file = kwargs.get('file', os.path.join(
+        DEFAULT_RESOURCE_DIR,
+        DEFAULT_HEADER_FILE
+    ))
+    data_file = append_to_file_name(data_file, '_clean')
+    # Run the analysis script
+    run(
+        '{0} {1}'.format(
+            os.path.join(
+                BASE_SRC_DIR,
+                BASE_PYTHON_DIR,
+                ANALYSIS_PACKAGE,
+                ANALYSIS_SCRIPT
+            ),
+            '{0} {1}'.format('--file', data_file)
+        ),
+        shell=True
+    )
 
 
 def learning_rule(**kwargs):
