@@ -38,9 +38,12 @@ def anonymize(headers):
             header["From"] = [header["From"][0].split("@")[1].split(".")[0]]
         # Generalize To Addresses
         # Note: The final condition causes addresses without @ signs to be ignored
-        is_valid_email = header["To"][0] != "{mail_list}"
+        is_valid_email = len(header['To']) > 0 and header["To"][0] != "{mail_list}"
         for index in range(len(header["To"])):
-            if header["To"][index] != '' and header["To"][index] != "{mail_list}" and len(header["To"][index].split("@")) >= 2:
+            checks = header["To"][index] != ''
+            checks = checks and header["To"][index] != "{mail_list}"
+            checks = checks and len(header["To"][index].split("@")) >= 2
+            if checks:
                 header["To"][index] = header["To"][index].split("@")[1].split(".")[0]
         # Generalize Cc Addresses
         for index in range(len(header["Cc"])):

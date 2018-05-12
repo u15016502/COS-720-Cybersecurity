@@ -11,8 +11,11 @@ utility without having enough information to uniquely identify a person
 import argparse
 import progressbar
 import json
-from .. import util
+import sys
 import anonymization_functions as af
+
+sys.path.append('src/python')
+import util
 
 NUMBER_OF_HEADERS = 251703
 ANON_FILE_NAME_ADDITION = '_anon'
@@ -39,11 +42,12 @@ def read_headers(filename):
     headers = []
     counter = 0
     with open(filename) as file:
-        with progressbar.ProgressBar(max_value=NUMBER_OF_HEADERS) as bar:
-            for line in file:
-                headers.append(json.loads(line))
-                bar.update(counter)
-                counter += 1
+        bar = util.ProgressBar(NUMBER_OF_HEADERS, 'Anonymizing headers', 72)
+        for line in file:
+            headers.append(json.loads(line))
+            bar.update(counter)
+            counter += 1
+        bar.clean()
     return headers
 
 

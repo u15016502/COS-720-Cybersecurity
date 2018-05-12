@@ -23,8 +23,10 @@ import os
 import sys
 import time
 import traceback
-from .. import util
 from multiprocessing import Lock, Manager, Process, Pool, Queue, Value
+
+sys.path.append('src/python')
+import util
 
 FILE_READ_MODE = 'r'
 FILE_WRITE_MODE = 'w'

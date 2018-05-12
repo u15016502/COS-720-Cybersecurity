@@ -9,8 +9,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import operator
 import progressbar
-from .. import util
+import sys
 from wordcloud import WordCloud, STOPWORDS
+
+sys.path.append('src/python')
+import util
 
 
 def analyze_basic(headers):

@@ -10,8 +10,11 @@ the headers produced by cleaning.py
 import json
 import argparse
 import progressbar
+import sys
 import analysis_functions as af
-from .. import util
+
+sys.path.append('src/python')
+import util
 
 NUMBER_OF_HEADERS = 251703
 
@@ -34,11 +37,12 @@ def read_headers(filename):
     headers = []
     counter = 0
     with open(filename) as file:
-        with progressbar.ProgressBar(max_value=NUMBER_OF_HEADERS) as bar:
-            for line in file:
-                headers.append(json.loads(line))
-                bar.update(counter)
-                counter += 1
+        bar = util.ProgressBar(NUMBER_OF_HEADERS, 'Analyzing headers', 72)
+        for line in file:
+            headers.append(json.loads(line))
+            bar.update(counter)
+            counter += 1
+        bar.clean()
     return headers
 
 

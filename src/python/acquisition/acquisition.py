@@ -19,9 +19,12 @@ import argparse
 import os
 import queue
 import re
+import sys
 import time
-from .. import util
 from multiprocessing import Pool, Queue
+
+sys.path.append('src/python')
+import util
 
 FILE_READ_MODE = 'r'
 FILE_WRITE_MODE = 'w'
