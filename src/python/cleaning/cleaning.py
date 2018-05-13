@@ -102,6 +102,10 @@ def is_valid_header_entry(header_map):
         # within the cleaning map.
         if header not in cleaning_functions.HEADER_CLEANING_MAP:
             return False
+    # Check if there is a message ID present in the headers,
+    # if there is not, then assume the header entry is invalid.
+    if header_map['Message-ID'] == [] or header_map['Message-ID'] == ['']:
+        return False
     # Entry is assumed to be valid if this point is reached.
     return True
 

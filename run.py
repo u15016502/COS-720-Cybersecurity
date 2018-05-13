@@ -2,8 +2,8 @@
 
 import argparse
 import os
+import progressbar
 import requests
-import shutil
 import stat
 import sys
 import tarfile
@@ -15,7 +15,7 @@ DEFAULT_RESOURCE_DIR = 'res'
 DEFAULT_DATASET_DIR = 'maildir'
 DEFAULT_HEADER_FILE = 'headers.dat'
 DEFAULT_CLEAN_HEADER_FILE = 'headers_clean.dat'
-DEFAULT_ANAONYMISED_FILE = 'headers_clean_anon.dat'
+DEFAULT_ANONYMISED_FILE = 'headers_clean_anon.dat'
 BASE_SRC_DIR = 'src'
 BASE_PYTHON_DIR = 'python'
 ACQUISITION_PACKAGE = 'acquisition'
@@ -86,7 +86,10 @@ def create_arg_parser():
     arg_parser.add_argument(
         '-p',
         '--path',
-        default=DEFAULT_RESOURCE_DIR,
+        default=os.path.join(
+            DEFAULT_RESOURCE_DIR,
+            DEFAULT_DATASET_DIR
+        ),
         help='Path to resource folder for data files'
     )
     arg_parser.add_argument(
@@ -97,13 +100,6 @@ def create_arg_parser():
             DEFAULT_HEADER_FILE
         ),
         help='Name of output data file for specified phase'
-    )
-    arg_parser.add_argument(
-        '-x',
-        '--ignore_x_headers',
-        action='store_true',
-        default=False,
-        help='Ignore X headers'
     )
     arg_parser.add_argument(
         '-i',
@@ -147,12 +143,6 @@ def is_executable(file_path):
 
 def check_executable_rules():
     global TARGET_SCRIPTS
-    check_file = os.path.join(
-        BASE_SRC_DIR,
-        BASE_PYTHON_DIR,
-        ANALYSIS_PACKAGE,
-        ANALYSIS_SCRIPT
-    )
     for script in TARGET_SCRIPTS:
         if not is_executable(script):
             script_stat = os.stat(script)
@@ -161,7 +151,7 @@ def check_executable_rules():
 
 def print_rule_title(title):
     print('')
-    print('{0:^110}'.format('---  {0} ---'.format(title)))
+    print('{0:^110}'.format('--- {0} ---'.format(title)))
 
 
 def append_to_file_name(file_name, appendage):
@@ -177,23 +167,40 @@ def append_to_file_name(file_name, appendage):
 
 
 def download_rule(**kwargs):
-    dataset_path = kwargs.get('dataset_path', DEFAULT_RESOURCE_DIR)
+    dataset_path = kwargs.get(
+        'dataset_path',
+        os.path.join(
+            DEFAULT_RESOURCE_DIR,
+            DEFAULT_DATASET_DIR
+        )
+    )
+    res_path = os.path.dirname(dataset_path)
+    download_file = os.path.join(
+        res_path,
+        DATASET_DOWNLOAD_URL.split('/')[-1]
+    )
     # Check if dataset path given exists if it does not assume
     # the dataset has not been downloaded.
-    if not os.path.isdir(dataset_path):
+    if not os.path.exists(download_file) and not os.path.exists(dataset_path):
         print_rule_title('Downloading')
-        download_file = os.path.join(
-            DEFAULT_RESOURCE_DIR,
-            DATASET_DOWNLOAD_URL.split('/')[-1]
-        )
         # Download the dataset file
         request = requests.get(DATASET_DOWNLOAD_URL, stream=True)
+        total_length = int(request.headers.get('content-length'))
+        ch_size = 256 * 2 ** 20
         # Move the downloaded bytes to a local file
         with open(download_file, 'wb') as file:
-            shutil.copyfileobj(request.raw, file)
+            bar = progressbar.ProgressBar(maxval=(total_length / ch_size) + 1)
+            bar.start()
+            for chunk in request.iter_content(chunk_size=ch_size): 
+                if chunk:
+                    file.write(chunk)
+                    bar.update(len(chunk))
+            bar.finish()
+    # Check to see if extraction of download file is necessary.
+    if os.path.isfile(download_file) and not os.path.exists(dataset_path):
         # The downloaded file is a tarball so extract it
         with tarfile.open(download_file) as tar:
-            tar.extract(path=DEFAULT_RESOURCE_DIR)
+            tar.extractall(path=res_path)
 
 
 def acquisition_rule(**kwargs):
@@ -203,7 +210,7 @@ def acquisition_rule(**kwargs):
         DEFAULT_RESOURCE_DIR,
         DEFAULT_HEADER_FILE
     ))
-    # Run the acquistion script
+    # Run the acquisition script
     run(
         '{0} {1} {2}'.format(
             os.path.join(
