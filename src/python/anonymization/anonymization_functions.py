@@ -28,10 +28,7 @@ def anonymize(headers):
         del header["X-Origin"]
         del header["X-cc"]
         del header["X-bcc"]
-        # Suppress X-Folder
-        # Note: Might have to be deleted as the folder might be too revealing
-        folder_parts = header["X-Folder"][0].split("\\")
-        header["X-Folder"] = [folder_parts[len(folder_parts) - 1]]
+        del header["X-Folder"]
         # Generalize From address
         is_valid_email = len(header["From"][0].split("@")) == 2
         if is_valid_email:
