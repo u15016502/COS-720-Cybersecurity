@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.6
+
 from FileParser import FileParser
 from Calculation import Calculation
 from XHeader import XHeader
@@ -36,7 +38,7 @@ else:
 	support_threshold_pair = 10000
 	support_threshold_triplet = 10000
 
-file_parser = FileParser("headers_clean.dat","association_rules.dat")
+file_parser = FileParser("res/headers_clean.dat","res/association_rules.dat")
 candidate_emails = file_parser.read_file()
 
 f1 = Feature1()

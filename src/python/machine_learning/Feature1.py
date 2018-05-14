@@ -6,7 +6,7 @@ import string
 class Feature1:
 	def __init__(self):
 		self.occurences = 0
-		self.dict = set(open('dict.txt').read().split()) 
+		self.dict = set(open('res/dict.txt').read().split()) 
 
 	def to_string(self):
 		return "Feature 1"

@@ -9,7 +9,7 @@ The script reads the email files and only acquires the headers,
 ignoring the email body.
 
 Note: The script sometimes references the word 'data' and it
-is important, therefore, to note that in this script the word 
+is important, therefore, to note that in this script the word
 'data' generally refers to email headers and their associated
 values.
 
@@ -117,7 +117,7 @@ def x_header_inclusive_reader(read_file):
         if line[:1] == '\t' or line[:1] == ' ':
             header_values.append(line.strip())
             continue
-        if not header == None:            
+        if not header == None:
             header_map[header] = header_values
         if line == '\n':
             break
@@ -148,11 +148,14 @@ def get_email_file_names(directory):
     spinner = util.Spinner('Seeking files in directory: "{0}"'.format(directory))
     spinner.start()
     # Perform a recursive walk in specified directory.
-    for directory_path, directories, files in os.walk(directory):	
+    for directory_path, directories, files in os.walk(directory):
         for file_name in files:
             file_names.append(os.path.join(directory_path, file_name))
     spinner.stop()
-    util.log_print('Found {0} files'.format(len(file_names)))
+    util.log_print('Found {0} files in "{1}"'.format(
+        len(file_names),
+        directory
+    ))
     return file_names
 
 
@@ -178,7 +181,7 @@ def write_to_data_file(data_file_name, num_files):
     counter = 0
     with open(data_file_name, FILE_WRITE_MODE) as data_file:
         while True:
-            # Keep retrieving header data from write queue until timeout exception 
+            # Keep retrieving header data from write queue until timeout exception
             # is raised (should mean that no more data will be added to the queue).
             try:
                 data = data_to_write_queue.get(block=True, timeout=QUEUE_TIMEOUT)
@@ -190,11 +193,17 @@ def write_to_data_file(data_file_name, num_files):
             except queue.Empty:
                 # Finish up the writing process.
                 progress_bar.clean()
-                util.log_print('{0} entries written'.format(counter))
+                util.log_print('{0} entries written in "{1}"'.format(
+                    counter,
+                    data_file_name
+                ))
                 break
             except Exception as error:
                 print(error)
-                util.log_print('{0} entries written'.format(counter))
+                util.log_print('{0} entries written in "{1}"'.format(
+                    counter,
+                    data_file_name
+                ))
                 break
 
 

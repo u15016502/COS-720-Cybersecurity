@@ -3,7 +3,7 @@
 class Feature4:
 	def __init__(self):
 		self.occurences = 0
-		self.dict = set(open('generic-salutation-dict.txt').read().split('\n')) 
+		self.dict = set(open('res/generic-salutation-dict.txt').read().split('\n')) 
 
 	def to_string(self):
 		return "Feature 4"

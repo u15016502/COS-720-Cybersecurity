@@ -96,15 +96,15 @@ class FileParser:
 				else:
 					classification_emails += line
 
-		with open("training-set-not-phishing.txt",'a+') as datafile:
+		with open("res/training-set-not-phishing.txt",'a+') as datafile:
 			datafile.write(not_phishing_emails)
 			datefile.close() 
 
-		with open("training-set-phishing.txt",'a+') as datafile:
+		with open("res/training-set-phishing.txt",'a+') as datafile:
 			datafile.write(phishing_emails)
 			datefile.close() 
 
-		with open("classification.txt",'a+') as datafile:
+		with open("res/classification.txt",'a+') as datafile:
 			datafile.write(classification_emails)
 			datefile.close() 
 

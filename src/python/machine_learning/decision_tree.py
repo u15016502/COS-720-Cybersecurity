@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.6
+
 from DecisionTree import DecisionTree
 from FileParser import FileParser
 from TreeBuilder import TreeBuilder
@@ -5,7 +7,7 @@ from TreeNode import TreeNode
 from Calculation import Calculation
 import random
 
-file_parser = FileParser("headers_clean.dat","decision_tree.dat")
+file_parser = FileParser("res/headers_clean.dat","res/decision_tree.dat")
 calculator = Calculation()
 all_emails = file_parser.read_file()
 

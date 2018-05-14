@@ -52,7 +52,7 @@ def anonymize(headers):
                 header["Bcc"][index] = header["Bcc"][index].split("@")[1].split(".")[0]
         # Suppress X-Filename to only show the file extension
         if len(header["X-FileName"]) > 0 and header["X-FileName"][0] != '':
-            header["X-FileName"] = ["." + header["X-FileName"][0].split(".")[1]]
+            header["X-FileName"] = ["*." + header["X-FileName"][0].split(".")[1]]
         # Generalize Date header value.
         header["Date"] = anonymize_date(header["Date"])
     return headers

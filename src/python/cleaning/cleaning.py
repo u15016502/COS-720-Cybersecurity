@@ -10,7 +10,7 @@ entries in a new file in the same directory as the unclean data
 file.
 
 Note: The script sometimes references the word 'data' and it
-is important, therefore, to note that in this script the word 
+is important, therefore, to note that in this script the word
 'data' generally refers to email headers and their associated
 values.
 
@@ -177,7 +177,7 @@ def write_clean_data_file(clean_data_file_name):
     counter = 0
     with open(clean_data_file_name, FILE_WRITE_MODE) as data_file:
         while True:
-            # Keep retrieving header data from write queue until timeout exception 
+            # Keep retrieving header data from write queue until timeout exception
             # is raised (should mean that no more data will be added to the queue).
             try:
                 clean_data = data_to_write_queue.get(block=True, timeout=QUEUE_TIMEOUT)

@@ -5,7 +5,7 @@ class DecisionTree:
 
 	def __init__(self):
 		self.root_node = TreeNode()
-		self.file_parser = FileParser("","decision_tree_phishing_emails.dat")
+		self.file_parser = FileParser("","res/decision_tree_phishing_emails.dat")
 		self.file_parser.write_file("Phishing emails within the training set: \n \n")
 
 	def classify(self,candidate_email):

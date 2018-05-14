@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.6
+
 import random
 import sys
 from Centroid import Centroid
@@ -12,7 +14,7 @@ from Calculation import Calculation
 
 number_of_centroids = sys.argv[0]
 calculator = Calculation()
-file_parser = FileParser("headers_clean.dat","cluster_definitions.dat")
+file_parser = FileParser("res/headers_clean.dat","res/cluster_definitions.dat")
 
 candidate_emails = file_parser.read_file()
 
@@ -76,7 +78,7 @@ for x in range(1,len(centroids)+1):
 	else:
 		file_parser.write_file("Class: " + centroids[x-1].cluster_data[0].classification + "\n")
 		if centroids[x-1].cluster_data[0].classification == "phishing":
-			file_parser_secondary = FileParser("","kmeans_phishing_emails.dat")
+			file_parser_secondary = FileParser("","res/kmeans_phishing_emails.dat")
 			for email in centroids[x-1].cluster_data:
 				file_parser_secondary.write_file(email.string_representation())
 				file_parser_secondary.write_file("-------------------------\n")

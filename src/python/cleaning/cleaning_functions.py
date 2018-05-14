@@ -69,7 +69,7 @@ def clean_non_multi_value_header(header, header_values, map_copy):
     """ Cleans headers that should not have multiple values. """
     # Some header values ought to be one single value as opposed
     # to multiple (which happens during header acquisition), such
-    # as the Subject header. 
+    # as the Subject header.
     if len(header_values) > 1:
         return [''.join(header_values)]
     return header_values
@@ -106,8 +106,8 @@ def clean_to_header(header, header_values, map_copy):
     """ Cleans To and similar header values. """
     # Since acquisition reads line-by-line, this function ensures that
     # the To header (as well as similar header values such as Cc) values
-    # are distinctly separated values. 
-    #   e.g: ['john@enron.com', 'jane@enron.com'] as opposed to 
+    # are distinctly separated values.
+    #   e.g: ['john@enron.com', 'jane@enron.com'] as opposed to
     #       ['john@enron.com, jane@enron.com']
     new_header_values = ''.join(header_values).split(',')
     return [ to.strip() for to in new_header_values ]

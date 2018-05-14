@@ -16,6 +16,7 @@ DEFAULT_DATASET_DIR = 'maildir'
 DEFAULT_HEADER_FILE = 'headers.dat'
 DEFAULT_CLEAN_HEADER_FILE = 'headers_clean.dat'
 DEFAULT_ANONYMISED_FILE = 'headers_clean_anon.dat'
+
 BASE_SRC_DIR = 'src'
 BASE_PYTHON_DIR = 'python'
 ACQUISITION_PACKAGE = 'acquisition'
@@ -27,6 +28,10 @@ ANONYMISATION_SCRIPT = 'anonymization.py'
 ANALYSIS_PACKAGE = 'exploratory_analysis'
 ANALYSIS_SCRIPT = 'analysis.py'
 LEARNING_PACKAGE = 'machine_learning'
+LEARNING_APRIORI_SCRIPT = 'apriori.py'
+LEARNING_KMEANS_SCRIPT = 'decision_tree.py'
+LEARNING_DECISION_SCRIPT = 'kmeans.py'
+
 TARGET_SCRIPTS = []
 TARGET_RULES = []
 
@@ -130,7 +135,10 @@ def initialise_global_variables():
         os.path.join(ACQUISITION_PACKAGE, ACQUISITION_SCRIPT),
         os.path.join(CLEANING_PACKAGE, CLEANING_SCRIPT),
         os.path.join(ANONYMISATION_PACKAGE, ANONYMISATION_SCRIPT),
-        os.path.join(ANALYSIS_PACKAGE, ANALYSIS_SCRIPT)
+        os.path.join(ANALYSIS_PACKAGE, ANALYSIS_SCRIPT),
+        os.path.join(LEARNING_PACKAGE, LEARNING_APRIORI_SCRIPT),
+        os.path.join(LEARNING_PACKAGE, LEARNING_DECISION_SCRIPT),
+        os.path.join(LEARNING_PACKAGE, LEARNING_KMEANS_SCRIPT)
     ]
     TARGET_SCRIPTS = [ 
         os.path.join(base_path, script) for script in target_script_paths
@@ -191,7 +199,7 @@ def download_rule(**kwargs):
         with open(download_file, 'wb') as file:
             bar = progressbar.ProgressBar(maxval=(total_length / ch_size) + 1)
             bar.start()
-            for chunk in request.iter_content(chunk_size=ch_size): 
+            for chunk in request.iter_content(chunk_size=ch_size):
                 if chunk:
                     file.write(chunk)
                     bar.update(len(chunk))
@@ -293,6 +301,42 @@ def analysis_rule(**kwargs):
 
 def learning_rule(**kwargs):
     print_rule_title('Learning')
+    # Run the apriori script
+    run(
+        '{0}'.format(
+            os.path.join(
+                BASE_SRC_DIR,
+                BASE_PYTHON_DIR,
+                LEARNING_PACKAGE,
+                LEARNING_APRIORI_SCRIPT
+            )
+        ),
+        shell=True
+    )
+    # Run the decision tree script
+    run(
+        '{0}'.format(
+            os.path.join(
+                BASE_SRC_DIR,
+                BASE_PYTHON_DIR,
+                LEARNING_PACKAGE,
+                LEARNING_DECISION_SCRIPT
+            )
+        ),
+        shell=True
+    )
+    # Run the kmeans script
+    run(
+        '{0}'.format(
+            os.path.join(
+                BASE_SRC_DIR,
+                BASE_PYTHON_DIR,
+                LEARNING_PACKAGE,
+                LEARNING_KMEANS_SCRIPT
+            )
+        ),
+        shell=True
+    )
 
 
 def filter_rules(rule, isolated):
